@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -137,5 +139,66 @@ public class ReservasServiceImpl implements IReservasService {
             return "Ocurrió un error al eliminar la reserva: " + e.getMessage();
         }
         return resultado;
+    }
+
+    public List<ReservaDTO> consultaReservas(){
+        try {
+            List<ReservaDTO> reservaDTO = new ArrayList<>();
+
+            List<Reserva> reservas = reservaRepository.findAllReservas();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.FORMAT_DATE_GENERAL);
+            if(reservas != null &&reservas.size() > 0){
+                for(Reserva reserva : reservas){
+                    ReservaDTO res = new ReservaDTO();
+                    res.setId(reserva.getId());
+                    res.setFehcaInicio(dateFormat.format(reserva.getFechaInicio()));
+                    res.setFehcaFin(dateFormat.format(reserva.getFechaFin()));
+                    res.setIdHabitacion(reserva.getCuarto().getId());
+                    res.setNombreCliente(reserva.getNombreCliente());
+                    res.setEstadoReserva(reserva.getEstadoReserva());
+                    reservaDTO.add(res);
+                }
+                return reservaDTO;
+            }
+        }catch (Exception e){
+            System.out.println("Ocurrio un error al obtener las reservas: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public List<ReservaDTO> consultaReporte(ReservaDTO reserva){
+        try {
+            List<ReservaDTO> reservaDTO = new ArrayList<>();
+            DateFormat formatter = new SimpleDateFormat(Constants.FORMAT_DATE_GENERAL);
+            Date date;
+            Timestamp timeStampDate =null;
+            String estatusReserva = null;
+            if (reserva.getFehcaInicio() != null) {
+                date = formatter.parse(reserva.getFehcaInicio());
+                timeStampDate = new Timestamp(date.getTime());
+            }
+            if(reserva.getEstadoReserva() != null && !reserva.getEstadoReserva().isEmpty()){
+                estatusReserva = reserva.getEstadoReserva();
+            }
+            List<Reserva> reservas = reservaRepository.findReport(timeStampDate,estatusReserva);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.FORMAT_DATE_GENERAL);
+            if(reservas != null &&reservas.size() > 0){
+                for(Reserva reservaR : reservas){
+                    ReservaDTO res = new ReservaDTO();
+                    res.setId(reservaR.getId());
+                    res.setFehcaInicio(dateFormat.format(reservaR.getFechaInicio()));
+                    res.setFehcaFin(dateFormat.format(reservaR.getFechaFin()));
+                    res.setIdHabitacion(reservaR.getCuarto().getId());
+                    res.setNombreCliente(reservaR.getNombreCliente());
+                    res.setEstadoReserva(reservaR.getEstadoReserva());
+                    reservaDTO.add(res);
+                }
+                return reservaDTO;
+            }
+
+        }catch (Exception e){
+            System.out.println("Ocurrio un error al obtener las reservas: " + e.getMessage());
+        }
+        return null;
     }
 }
