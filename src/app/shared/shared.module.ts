@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { ViewsModule } from './views/views.module';
+import { CommonModule } from '@angular/common';
+import { DataTableComponent } from './components/data-table/data-table.component';
+import { SharedRoutingModule } from './shared-routing.module';
 import { MatTableModule } from '@angular/material/table';
 import {FormsModule} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -11,22 +9,21 @@ import { MatButtonModule } from '@angular/material/button';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DatePipe } from '@angular/common'
 
+
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [DataTableComponent],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ViewsModule,
+    CommonModule,
+    SharedRoutingModule,
     MatTableModule,
     MatInputModule,
     MatButtonModule,
     FormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule
+    HttpClientModule
   ],
   providers: [DatePipe],
-  bootstrap: [AppComponent]
+  exports: [
+    DataTableComponent
+  ]
 })
-export class AppModule { }
+export class SharedModule { }
